@@ -1,6 +1,7 @@
 #ifndef ASSIGNMENT5_MAKOTO_BC__BST_H_
 #define ASSIGNMENT5_MAKOTO_BC__BST_H_
 
+#include "option.h"
 #include <memory>
 #include <ostream>
 
@@ -35,21 +36,13 @@ public:
 		}
 	}
 
-	const T& get(const T& item) const {
-		Node* curr = _root.get();
-		while (curr) {
-			if (curr->value == item) {
-				curr->value = item;
-				return curr->value;
-			}
-
-			if (curr->value > curr->value) {
-				curr = curr->right.get();
-			} else {
-				curr = curr->left.get();
-			}
+	Option<T> get(const T& item) const {
+		Node* parent = parentNode(_root.get(), item);
+		if (parent == nullptr) {
+			return {};
 		}
-		return curr->value;
+
+		return {parent->value};
 	}
 
 	std::vector<T> items() const {
@@ -57,17 +50,7 @@ public:
 	}
 
 	void insert(T item) {
-		Node* curr = _root.get();
-		Node* parent = nullptr;
-		while (curr) {
-			parent = curr;
-			if (item < curr->value) {
-				curr = curr->left.get();
-			} else {
-				curr = curr->right.get();
-			}
-		}
-
+		Node* parent = parentNode(_root.get(), item);
 		if (parent == nullptr) {
 			_root = std::make_unique<Node>(item);
 		} else if (item < parent->value) {
@@ -95,6 +78,20 @@ private:
 			std::make_move_iterator(rightItems.end())
 		);
 		return result;
+	}
+
+	static Node* parentNode(Node* root, const T& item) {
+		Node* curr = root;
+		Node* parent = nullptr;
+		while (curr) {
+			parent = curr;
+			if (item < curr->value) {
+				curr = curr->left.get();
+			} else {
+				curr = curr->right.get();
+			}
+		}
+		return parent;
 	}
 
 	std::unique_ptr<Node> _root;

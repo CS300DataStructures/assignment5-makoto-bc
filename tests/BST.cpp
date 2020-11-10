@@ -14,6 +14,15 @@ std::ostream& operator<<(std::ostream& os, const BST<int>& bst) {
 	return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const Option<const int*>& option) {
+	if (option.hasValue()) {
+		os << option.value();
+	} else {
+		os << "None";
+	}
+	return os;
+}
+
 TEST(BST, constructor) {
 	struct Test {
 		std::vector<int> items;
@@ -37,6 +46,51 @@ TEST(BST, constructor) {
 	for (size_t i = 0; i < tests.size(); ++i) {
 		BST<int> result(tests[i].items);
 		ASSERT_EQ(result.items(), tests[i].items) << i;
+	}
+}
+
+TEST(BST, get) {
+	struct Test {
+		BST<int> tree;
+		int item;
+		Option<int> expected;
+	};
+
+	std::vector<Test> tests {
+		{
+			BST<int>(std::vector<int>{}),
+			0,
+			{},
+		},
+		{
+			BST<int>(std::vector<int>{0}),
+			0,
+			{0},
+		},
+		{
+			BST<int>(std::vector<int>{0}),
+			1,
+			{},
+		},
+		{
+			BST<int>(std::vector<int>{0, 1}),
+			0,
+			{0},
+		},
+		{
+			BST<int>(std::vector<int>{0, 1}),
+			1,
+			{1},
+		},
+		{
+			BST<int>(std::vector<int>{0, 1, 2}),
+			2,
+			{2},
+		},
+	};
+
+	for (size_t i = 0; i < tests.size(); ++i) {
+		ASSERT_EQ(tests[i].tree.get(tests[i].item), tests[i].expected) << i;
 	}
 }
 
