@@ -76,11 +76,11 @@ private:
 
 		auto result = node_entries(node->left.get());
 		result.push_back({node->key, node->value});
-		auto rightItems = node_entries(node->right.get());
+		auto rightEntries = node_entries(node->right.get());
 		result.insert(
 			result.end(),
-			std::make_move_iterator(rightItems.begin()),
-			std::make_move_iterator(rightItems.end())
+			std::make_move_iterator(rightEntries.begin()),
+			std::make_move_iterator(rightEntries.end())
 		);
 		return result;
 	}

@@ -14,7 +14,7 @@ std::ostream& operator<<(std::ostream& os, const BST<int>& bst) {
 	return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const Option<const int*>& option) {
+std::ostream& operator<<(std::ostream& os, const Option<std::string>& option) {
 	if (option.hasValue()) {
 		os << option.value();
 	} else {
