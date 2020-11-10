@@ -4,19 +4,23 @@
 #include "option.h"
 #include <memory>
 #include <ostream>
+#include <string>
 
-template<class T>
+template<class K, class V = std::string>
 class BST {
 private:
 	class Node {
 	public:
-		Node(T value)
-			: value(value) {}
+		Node(K key, V value)
+			: key(key)
+			, value(value) {}
 
 		std::unique_ptr<Node> left;
 		std::unique_ptr<Node> right;
-		T value;
+		K key;
+		V value;
 	};
+
 public:
 	BST() = default;
 
@@ -25,19 +29,19 @@ public:
 	}
 
 	BST(const BST& other) : BST() {
-		for (auto item : other.items()) {
-			insert(std::move(item));
+		for (const auto& entry : other.items()) {
+			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
 		}
 	}
 
-	explicit BST(std::vector<T> items) : BST() {
-		for (const T& item : items) {
-			insert(std::move(item));
+	explicit BST(std::vector<std::tuple<K, V>> entries) : BST() {
+		for (const auto& entry : entries) {
+			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
 		}
 	}
 
-	Option<T> get(const T& item) const {
-		Node* parent = parentNode(_root.get(), item);
+	Option<V> get(const K& key) const {
+		Node* parent = parentNode(_root.get(), key);
 		if (parent == nullptr) {
 			return {};
 		}
@@ -45,18 +49,18 @@ public:
 		return {parent->value};
 	}
 
-	std::vector<T> items() const {
-		return node_items(_root.get());
+	std::vector<std::tuple<K, V>> items() const {
+		return node_entries(_root.get());
 	}
 
-	void insert(T item) {
-		Node* parent = parentNode(_root.get(), item);
+	void insert(K key, V value) {
+		Node* parent = parentNode(_root.get(), key);
 		if (parent == nullptr) {
-			_root = std::make_unique<Node>(item);
-		} else if (item < parent->value) {
-			parent->left = std::make_unique<Node>(item);
+			_root = std::make_unique<Node>(key, value);
+		} else if (key < parent->key) {
+			parent->left = std::make_unique<Node>(key, value);
 		} else {
-			parent->right = std::make_unique<Node>(item);
+			parent->right = std::make_unique<Node>(key, value);
 		}
 	}
 
@@ -65,13 +69,14 @@ public:
 	}
 
 private:
-	static std::vector<T> node_items(const Node* node) {
+	static std::vector<std::tuple<K, V>> node_entries(const Node* node) {
 		if (node == nullptr) {
 			return {};
 		}
-		std::vector<T> result = node_items(node->left.get());
-		result.push_back(node->value);
-		auto rightItems = node_items(node->right.get());
+
+		auto result = node_entries(node->left.get());
+		result.push_back({node->key, node->value});
+		auto rightItems = node_entries(node->right.get());
 		result.insert(
 			result.end(),
 			std::make_move_iterator(rightItems.begin()),
@@ -80,12 +85,12 @@ private:
 		return result;
 	}
 
-	static Node* parentNode(Node* root, const T& item) {
+	static Node* parentNode(Node* root, const K& key) {
 		Node* curr = root;
 		Node* parent = nullptr;
 		while (curr) {
 			parent = curr;
-			if (item < curr->value) {
+			if (key < curr->key) {
 				curr = curr->left.get();
 			} else {
 				curr = curr->right.get();

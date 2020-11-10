@@ -5,9 +5,9 @@ std::ostream& operator<<(std::ostream& os, const BST<int>& bst) {
 	os << "{";
 	auto items = bst.items();
 	for (size_t i = 0; i < items.size(); ++i) {
-		os << items[i];
+		os << "{" << std::get<0>(items[i]) << ", " << std::get<1>(items[i]) << "}";
 		if (i < items.size() - 1) {
-			os << ",";
+			os << ", ";
 		}
 	}
 	os << "}";
@@ -25,7 +25,7 @@ std::ostream& operator<<(std::ostream& os, const Option<const int*>& option) {
 
 TEST(BST, constructor) {
 	struct Test {
-		std::vector<int> items;
+		std::vector<std::tuple<int, std::string>> items;
 	};
 
 	std::vector<Test> tests {
@@ -33,13 +33,13 @@ TEST(BST, constructor) {
 			{},
 		},
 		{
-			{0},
+			{{0, "a"}},
 		},
 		{
-			{0, 1, 2},
+			{{0, "a"}, {1, "b"}, {2, "c"}},
 		},
 		{
-			{0, 0},
+			{{0, "a"}, {0, "b"}},
 		},
 	};
 
@@ -52,95 +52,113 @@ TEST(BST, constructor) {
 TEST(BST, get) {
 	struct Test {
 		BST<int> tree;
-		int item;
-		Option<int> expected;
+		int key;
+		Option<std::string> expected;
 	};
 
 	std::vector<Test> tests {
 		{
-			BST<int>(std::vector<int>{}),
+			BST<int>(std::vector<std::tuple<int, std::string>>{}),
 			0,
 			{},
 		},
 		{
-			BST<int>(std::vector<int>{0}),
+			BST<int>({{0, "a"}}),
 			0,
-			{0},
+			{"a"},
 		},
 		{
-			BST<int>(std::vector<int>{0}),
+			BST<int>({{0, "a"}}),
 			1,
 			{},
 		},
 		{
-			BST<int>(std::vector<int>{0, 1}),
+			BST<int>({{0, "a"}, {1, "b"}}),
 			0,
-			{0},
+			{"a"},
 		},
 		{
-			BST<int>(std::vector<int>{0, 1}),
+			BST<int>({{0, "a"}, {1, "b"}}),
 			1,
-			{1},
+			{"b"},
 		},
 		{
-			BST<int>(std::vector<int>{0, 1, 2}),
+			BST<int>({{0, "a"}, {1, "b"}, {2, "c"}}),
 			2,
-			{2},
+			{"C"},
+		},
+		{
+			BST<int>({{0, "a"}, {0, "b"}}),
+			0,
+			{"a"},
+		},
+		{
+			BST<int>({{0, "a"}, {1, "b"}, {1, "c"}}),
+			1,
+			{"b"},
 		},
 	};
 
 	for (size_t i = 0; i < tests.size(); ++i) {
-		ASSERT_EQ(tests[i].tree.get(tests[i].item), tests[i].expected) << i;
+		ASSERT_EQ(tests[i].tree.get(tests[i].key), tests[i].expected) << i;
 	}
 }
 
 TEST(BST, insert) {
 	struct Test {
 		BST<int> tree;
-		int insert;
+		int key;
+		std::string value;
 		BST<int> expected;
 	};
 
 	std::vector<Test> tests {
 		{ // 0
-			BST<int>(std::vector<int>{}),
+			BST<int>(std::vector<std::tuple<int, std::string>>{}),
 			0,
-			BST<int>(std::vector<int>{0}),
+			"a",
+			BST<int>({{0, "a"}}),
 		},
 		{ // 1
-			BST<int>(std::vector<int>{0}),
+			BST<int>({{0, "a"}}),
 			1,
-			BST<int>(std::vector<int>{0, 1}),
+			"b",
+			BST<int>({{0, "a"}, {1, "b"}}),
 		},
 		{ // 2
-			BST<int>(std::vector<int>{1}),
+			BST<int>({{1, "b"}}),
 			0,
-			BST<int>(std::vector<int>{0, 1}),
+			"a",
+			BST<int>({{0, "a"}, {1, "b"}}),
 		},
 		{ // 3
-			BST<int>(std::vector<int>{1, 3}),
+			BST<int>({{1, "b"}, {3, "d"}}),
 			0,
-			BST<int>(std::vector<int>{0, 1, 3}),
+			"a",
+			BST<int>({{0, "a"}, {1, "b"}, {3, "d"}}),
 		},
 		{ // 4
-			BST<int>(std::vector<int>{1, 3}),
+			BST<int>({{1, "b"}, {3, "d"}}),
 			2,
-			BST<int>(std::vector<int>{1, 2, 3}),
+			"c",
+			BST<int>({{1, "b"}, {2, "c"}, {3, "d"}}),
 		},
 		{ // 5
-			BST<int>(std::vector<int>{1, 3}),
+			BST<int>({{1, "b"}, {3, "d"}}),
 			4,
-			BST<int>(std::vector<int>{1, 3, 4}),
+			"e",
+			BST<int>({{1, "b"}, {3, "d"}, {4, "e"}}),
 		},
 		{ // 6
-			BST<int>(std::vector<int>{1, 3}),
+			BST<int>({{1, "b"}, {3, "d"}}),
 			1,
-			BST<int>(std::vector<int>{1, 1, 3}),
+			"b",
+			BST<int>({{1, "b"}, {1, "b"}, {3, "d"}}),
 		},
 	};
 
 	for (size_t i = 0; i < tests.size(); ++i) {
-		tests[i].tree.insert(tests[i].insert);
+		tests[i].tree.insert(tests[i].key, tests[i].value);
 		ASSERT_EQ(tests[i].tree, tests[i].expected) << i;
 	}
 }
