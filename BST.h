@@ -1,0 +1,8 @@
+#ifndef ASSIGNMENT5_MAKOTO_BC__BST_H_
+#define ASSIGNMENT5_MAKOTO_BC__BST_H_
+
+class BST {
+
+};
+
+#endif //ASSIGNMENT5_MAKOTO_BC__BST_H_
