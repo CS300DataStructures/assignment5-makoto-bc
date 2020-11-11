@@ -12,8 +12,10 @@ class BST {
 private:
 	class Node {
 	public:
-		Node(K key, V value)
-			: key(key)
+		Node(std::unique_ptr<Node> left, std::unique_ptr<Node> right, K key, V value)
+			: left(std::move(left))
+			, right(std::move(right))
+			, key(key)
 			, value(value) {}
 
 		std::unique_ptr<Node> left;
@@ -45,7 +47,11 @@ public:
 			return {};
 		}
 
-		return {parent->value};
+		if (parent->key == key) {
+			return {parent->value};
+		}
+
+		return {};
 	}
 
 	std::vector<std::tuple<K, V>> items() const {
@@ -55,11 +61,19 @@ public:
 	void insert(K key, V value) {
 		Node* parent = parentNode(_root.get(), key);
 		if (parent == nullptr) {
-			_root = std::make_unique<Node>(key, std::move(value));
+			_root = std::make_unique<Node>(nullptr, nullptr, key, std::move(value));
 		} else if (key < parent->key) {
-			parent->left = std::make_unique<Node>(key, std::move(value));
+			if (parent->left) {
+				parent->left = std::make_unique<Node>(std::move(parent->left), nullptr, key, std::move(value));
+			} else {
+				parent->left = std::make_unique<Node>(nullptr, nullptr, key, std::move(value));
+			}
 		} else {
-			parent->right = std::make_unique<Node>(key, std::move(value));
+			if (parent->right) {
+				parent->right = std::make_unique<Node>(nullptr, std::move(parent->right), key, std::move(value));
+			} else {
+				parent->right = std::make_unique<Node>(nullptr, nullptr, key, std::move(value));
+			}
 		}
 	}
 
@@ -96,7 +110,9 @@ private:
 		Node* parent = nullptr;
 		while (curr) {
 			parent = curr;
-			if (key < curr->key) {
+			if (key == curr->key) {
+				return parent;
+			} else if (key < curr->key) {
 				curr = curr->left.get();
 			} else {
 				curr = curr->right.get();

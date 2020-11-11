@@ -1,22 +1,38 @@
 #include "file.h"
-#include <fstream>
+#include <sstream>
+#include <iostream>
 
 namespace file {
 
 BST<UPC> buildTree(const std::string& filepath) {
 	std::ifstream file(filepath);
+	if (!file.good()) {
+		throw std::runtime_error("file open error");
+	}
+
+	// Skip first line
+	std::string s;
+	std::getline(file, s);
 	return readLines(file);
 }
 
 BST<UPC> readLines(std::istream& file) {
 	BST<UPC> result;
+	size_t line = 1;
 	while (!file.eof()) {
 		file.peek();
 		if (file.eof()) {
 			return result;
 		}
 
-		readTree(file, result);
+		try {
+			readTree(file, result);
+		} catch (const std::runtime_error& e) {
+			std::stringstream ss;
+			ss << "line " << line << ": " << e.what();
+			throw std::runtime_error(ss.str());
+		}
+		++line;
 	}
 	return result;
 }
@@ -32,7 +48,7 @@ void skipCommas(std::istream& file) {
 			if (commaCount == count) {
 				return;
 			}
-		} else if (file.eof()) {
+		} else if (!file.good()) {
 			throw std::runtime_error("invalid file");
 		}
 	}

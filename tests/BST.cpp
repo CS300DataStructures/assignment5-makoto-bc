@@ -18,7 +18,7 @@ std::ostream& operator<<(std::ostream& os, const Option<std::string>& option) {
 	if (option.hasValue()) {
 		os << option.value();
 	} else {
-		os << "None";
+		os << "none";
 	}
 	return os;
 }
@@ -153,8 +153,20 @@ TEST(BST, insert) {
 		{ // 6
 			BST<int>({{1, "b"}, {3, "d"}}),
 			1,
-			"b",
-			BST<int>({{1, "b"}, {1, "b"}, {3, "d"}}),
+			"c",
+			BST<int>({{1, "b"}, {1, "c"}, {3, "d"}}),
+		},
+		{ // 7
+			BST<int>({{1, "b"}, {3, "d"}}),
+			3,
+			"e",
+			BST<int>({{1, "b"}, {3, "d"}, {3, "e"}}),
+		},
+		{ // 8
+			BST<int>({{1, "b"}, {1, "c"}}),
+			1,
+			"d",
+			BST<int>({{1, "b"}, {1, "d"}, {1, "c"}}),
 		},
 	};
 
