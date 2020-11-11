@@ -25,7 +25,7 @@ std::ostream& operator<<(std::ostream& os, const Option<std::string>& option) {
 
 TEST(BST, constructor) {
 	struct Test {
-		std::vector<std::tuple<int, std::string>> items;
+		std::initializer_list<std::tuple<int, std::string>> items;
 	};
 
 	std::vector<Test> tests {
@@ -45,7 +45,8 @@ TEST(BST, constructor) {
 
 	for (size_t i = 0; i < tests.size(); ++i) {
 		BST<int> result(tests[i].items);
-		ASSERT_EQ(result.items(), tests[i].items) << i;
+		std::vector<std::tuple<int, std::string>> expected(tests[i].items);
+		EXPECT_EQ(result.items(), expected) << i;
 	}
 }
 
@@ -58,7 +59,7 @@ TEST(BST, get) {
 
 	std::vector<Test> tests {
 		{
-			BST<int>(std::vector<std::tuple<int, std::string>>{}),
+			BST<int>({}),
 			0,
 			{},
 		},
@@ -100,7 +101,7 @@ TEST(BST, get) {
 	};
 
 	for (size_t i = 0; i < tests.size(); ++i) {
-		ASSERT_EQ(tests[i].tree.get(tests[i].key), tests[i].expected) << i;
+		EXPECT_EQ(tests[i].tree.get(tests[i].key), tests[i].expected) << i;
 	}
 }
 
@@ -114,7 +115,7 @@ TEST(BST, insert) {
 
 	std::vector<Test> tests {
 		{ // 0
-			BST<int>(std::vector<std::tuple<int, std::string>>{}),
+			BST<int>({}),
 			0,
 			"a",
 			BST<int>({{0, "a"}}),
@@ -159,6 +160,6 @@ TEST(BST, insert) {
 
 	for (size_t i = 0; i < tests.size(); ++i) {
 		tests[i].tree.insert(tests[i].key, tests[i].value);
-		ASSERT_EQ(tests[i].tree, tests[i].expected) << i;
+		EXPECT_EQ(tests[i].tree, tests[i].expected) << i;
 	}
 }

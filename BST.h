@@ -1,10 +1,11 @@
 #ifndef ASSIGNMENT5_MAKOTO_BC__BST_H_
 #define ASSIGNMENT5_MAKOTO_BC__BST_H_
 
-#include "option.h"
+#include "Option.h"
 #include <memory>
 #include <ostream>
 #include <string>
+#include <vector>
 
 template<class K, class V = std::string>
 class BST {
@@ -29,12 +30,10 @@ public:
 	}
 
 	BST(const BST& other) : BST() {
-		for (const auto& entry : other.items()) {
-			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
-		}
+		this->operator=(other);
 	}
 
-	explicit BST(std::vector<std::tuple<K, V>> entries) : BST() {
+	explicit BST(std::initializer_list<std::tuple<K, V>> entries) : BST() {
 		for (const auto& entry : entries) {
 			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
 		}
@@ -56,16 +55,23 @@ public:
 	void insert(K key, V value) {
 		Node* parent = parentNode(_root.get(), key);
 		if (parent == nullptr) {
-			_root = std::make_unique<Node>(key, value);
+			_root = std::make_unique<Node>(key, std::move(value));
 		} else if (key < parent->key) {
-			parent->left = std::make_unique<Node>(key, value);
+			parent->left = std::make_unique<Node>(key, std::move(value));
 		} else {
-			parent->right = std::make_unique<Node>(key, value);
+			parent->right = std::make_unique<Node>(key, std::move(value));
 		}
 	}
 
 	bool operator==(const BST& rhs) const {
 		return items() == rhs.items();
+	}
+
+	BST& operator=(const BST& other) {
+		for (const auto& entry : other.items()) {
+			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
+		}
+		return *this;
 	}
 
 private:

@@ -1,7 +1,6 @@
 //Started code for Assignment5
 //You are allowed to add, but not remove statements 
-
-//..
+#include "file.h"
 
 int main() {
     //...
