@@ -23,7 +23,7 @@ std::ostream& operator<<(std::ostream& os, const Option<std::string>& option) {
 	return os;
 }
 
-TEST(BST, constructor) {
+TEST(BST, listConstructor) {
 	struct Test {
 		std::initializer_list<std::tuple<int, std::string>> items;
 	};
@@ -47,6 +47,19 @@ TEST(BST, constructor) {
 		BST<int> result(tests[i].items);
 		std::vector<std::tuple<int, std::string>> expected(tests[i].items);
 		EXPECT_EQ(result.items(), expected) << i;
+	}
+}
+
+TEST(BST, copyConstructor) {
+	{
+		BST<int> tree;
+		auto copy = tree; // NOLINT(performance-unnecessary-copy-initialization)
+		ASSERT_EQ(copy, tree);
+	}
+	{
+		BST<int> tree({{0, "a"}, {1, "b"}});
+		auto copy = tree; // NOLINT(performance-unnecessary-copy-initialization)
+		ASSERT_EQ(copy, tree);
 	}
 }
 
@@ -167,6 +180,18 @@ TEST(BST, insert) {
 			1,
 			"d",
 			BST<int>({{1, "b"}, {1, "d"}, {1, "c"}}),
+		},
+		{ // 9
+			BST<int>({{3, "d"}, {1, "b"}}),
+			2,
+			"c",
+			BST<int>({{1, "b"}, {2, "c"}, {3, "d"}}),
+		},
+		{ // 10
+			BST<int>({{3, "d"}, {1, "b"}}),
+			0,
+			"a",
+			BST<int>({{0, "a"}, {1, "b"}, {3, "d"}}),
 		},
 	};
 

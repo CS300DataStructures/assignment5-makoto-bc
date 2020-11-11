@@ -14,8 +14,6 @@ std::ostream& operator<<(std::ostream& os, const BST<UPC>& bst) {
 	return os;
 }
 
-using namespace file;
-
 TEST(file, readLines) {
 	struct Test {
 		std::string text;

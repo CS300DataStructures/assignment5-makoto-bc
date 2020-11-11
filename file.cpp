@@ -2,8 +2,6 @@
 #include <sstream>
 #include <iostream>
 
-namespace file {
-
 BST<UPC> buildTree(const std::string& filepath) {
 	std::ifstream file(filepath);
 	if (!file.good()) {
@@ -71,6 +69,4 @@ void readTree(std::istream& file, BST<UPC>& tree) {
 	std::string name;
 	std::getline(file, name);
 	tree.insert(upc.value(), name);
-}
-
 }
