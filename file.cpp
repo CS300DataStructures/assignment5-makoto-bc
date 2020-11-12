@@ -5,7 +5,7 @@
 BST<UPC> buildTree(const std::string& filepath) {
 	std::ifstream file(filepath);
 	if (!file.good()) {
-		throw std::runtime_error("file open error");
+		throw std::runtime_error("file does not exist");
 	}
 
 	// Skip first line
@@ -53,10 +53,6 @@ void skipCommas(std::istream& file) {
 }
 
 void readTree(std::istream& file, BST<UPC>& tree) {
-	if (file.eof()) {
-		return;
-	}
-
 	skipCommas<2>(file);
 
 	auto upc = UPC::read(file);

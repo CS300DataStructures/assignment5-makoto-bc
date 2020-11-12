@@ -14,6 +14,13 @@ std::ostream& operator<<(std::ostream& os, const BST<UPC>& bst) {
 	return os;
 }
 
+TEST(file, buildTree) {
+	std::string path = __FILE__;
+	path = path.substr(0, path.find_last_of('/', path.find_last_of('/') - 1) + 1)
+		+ "Grocery_UPC_Database.csv";
+	ASSERT_EQ(buildTree(path).entries().size(), 110436);
+}
+
 TEST(file, readLines) {
 	struct Test {
 		std::string text;

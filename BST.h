@@ -65,13 +65,23 @@ public:
 			_root = std::make_unique<Node>(nullptr, nullptr, key, std::move(value));
 		} else if (key < parent->key) {
 			if (parent->left) {
-				parent->left = std::make_unique<Node>(std::move(parent->left), nullptr, key, std::move(value));
+				parent->left = std::make_unique<Node>(
+					std::move(parent->left),
+					nullptr,
+					key,
+					std::move(value)
+				);
 			} else {
 				parent->left = std::make_unique<Node>(nullptr, nullptr, key, std::move(value));
 			}
 		} else {
 			if (parent->right) {
-				parent->right = std::make_unique<Node>(nullptr, std::move(parent->right), key, std::move(value));
+				parent->right = std::make_unique<Node>(
+					nullptr,
+					std::move(parent->right),
+					key,
+					std::move(value)
+				);
 			} else {
 				parent->right = std::make_unique<Node>(nullptr, nullptr, key, std::move(value));
 			}
