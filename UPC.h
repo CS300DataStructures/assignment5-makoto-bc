@@ -16,9 +16,6 @@ public:
 	explicit UPC(unsigned long long number)
 		: _n(number) {}
 
-	explicit UPC(long number)
-		: _n(static_cast<unsigned long long>(number)) {}
-
 	/**
 	 * @param file Stream to read from
 	 * @return The UPC if input was valid, otherwise none

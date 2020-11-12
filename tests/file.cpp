@@ -40,21 +40,26 @@ TEST(file, readLines) {
 			{},
 		},
 		{ // 2
-			",,0,,a",
-			false,
-			{{UPC(0ull), "a"}},
+			"\n",
+			true,
+			{},
 		},
 		{ // 3
-			",,0,,a\n",
+			",,0,,a",
 			false,
-			{{UPC(0ull), "a"}},
+			{{UPC(0), "a"}},
 		},
 		{ // 4
+			",,0,,a\n",
+			false,
+			{{UPC(0), "a"}},
+		},
+		{ // 5
 			"1,00035200264013,035200264013,Riceland,Riceland American Jazmine Rice\n",
 			false,
 			{{UPC(35200264013), "Riceland American Jazmine Rice"}},
 		},
-		{ // 5
+		{ // 6
 			"1,00035200264013,035200264013,Riceland,Riceland American Jazmine Rice\n2,00011111065925,011111065925,Caress,Caress Velvet Bliss Ultra Silkening Beauty Bar - 6 Ct",
 			false,
 			{
@@ -107,17 +112,17 @@ TEST(file, readTree) {
 		{ // 4
 			",,0,,",
 			false,
-			{UPC(0ull), ""},
+			{UPC(0), ""},
 		},
 		{ // 5
 			",,0,,a",
 			false,
-			{UPC(0ull), "a"},
+			{UPC(0), "a"},
 		},
 		{ // 6
 			",,0,,a\nb",
 			false,
-			{UPC(0ull), "a"},
+			{UPC(0), "a"},
 		},
 		{ // 7
 			",,0,\n",

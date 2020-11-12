@@ -40,9 +40,9 @@ int main() {
 	cout << "Please enter a UPC code(! to quit): ";
 	cin >> code;
 	while (code != "!") {
-		long entry = 0;
+		unsigned long long entry = 0;
 		try {
-			entry = stol(code); //convert user inputted string to type long int
+			entry = stoull(code);
 		} catch (...) {
 			cout << "Please enter a UPC code(! to quit): ";
 			cin >> code;

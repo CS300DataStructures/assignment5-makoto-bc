@@ -17,7 +17,7 @@ BST<UPC> buildTree(const std::string& filepath) {
 std::vector<std::tuple<UPC, std::string>> readLines(std::istream& file) {
 	std::vector<std::tuple<UPC, std::string>> result;
 	size_t line = 1;
-	while (!file.eof()) {
+	while (true) {
 		file.peek();
 		if (file.eof()) {
 			return result;
@@ -32,7 +32,6 @@ std::vector<std::tuple<UPC, std::string>> readLines(std::istream& file) {
 		}
 		++line;
 	}
-	return result;
 }
 
 template<size_t count>
