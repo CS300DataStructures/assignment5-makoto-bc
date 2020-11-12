@@ -10,7 +10,7 @@ public:
 	Option()
 		: _valid(false) {}
 
-	Option(T value)
+	Option(T value) // NOLINT(google-explicit-constructor)
 		: _valid(true)
 		, _value(std::move(value)) {}
 

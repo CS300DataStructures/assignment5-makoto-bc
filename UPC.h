@@ -8,7 +8,7 @@
 class UPC {
 public:
 	UPC()
-		: _n(-1) {}
+		: _n(static_cast<unsigned long long>(-1)) {}
 
 	explicit UPC(unsigned long long number)
 		: _n(number) {}

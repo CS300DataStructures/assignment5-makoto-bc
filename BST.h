@@ -27,7 +27,7 @@ private:
 public:
 	BST() = default;
 
-	BST(BST&& other) : BST() {
+	BST(BST&& other) noexcept : BST() {
 		_root = std::move(other._root);
 	}
 
@@ -35,7 +35,7 @@ public:
 		this->operator=(other);
 	}
 
-	explicit BST(std::initializer_list<std::tuple<K, V>> entries) : BST() {
+	BST(std::initializer_list<std::tuple<K, V>> entries) : BST() {
 		for (const auto& entry : entries) {
 			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
 		}
