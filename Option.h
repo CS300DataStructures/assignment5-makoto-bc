@@ -4,6 +4,9 @@
 #include <stdexcept>
 #include <ostream>
 
+/**
+ * An optional value.
+ */
 template<class T>
 class Option {
 public:
@@ -14,10 +17,18 @@ public:
 		: _valid(true)
 		, _value(std::move(value)) {}
 
+	/**
+	 * @return The value
+	 * @throws std::runtime_error This does not contain a value
+	 */
 	T& value() {
 		return const_cast<T&>(const_cast<const Option*>(this)->value());
 	}
 
+	/**
+	 * @return The value
+	 * @throws std::runtime_error This does not contain a value
+	 */
 	const T& value() const {
 		if (!_valid) {
 			throw std::runtime_error("does not contain a value");
@@ -26,6 +37,9 @@ public:
 		return _value;
 	}
 
+	/**
+	 * @return true if this contains a value
+	 */
 	bool hasValue() const {
 		return _valid;
 	}

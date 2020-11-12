@@ -1,7 +1,17 @@
+// Assignment 5
+// Makoto Emura
+// 11/11/2020
+// Product database implemented with binary search tree
+
 #include "file.h"
 #include <iostream>
 #include <chrono>
 
+/**
+ * Searches tree and outputs description of item and search duration.
+ * @param tree Container to search
+ * @param key Key to search for
+ */
 void performSearchBST(const BST<UPC>& tree, const UPC& key) {
 	using std::chrono::high_resolution_clock;
 	using std::chrono::duration_cast;

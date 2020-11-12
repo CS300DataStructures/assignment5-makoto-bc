@@ -5,6 +5,9 @@
 #include <ostream>
 #include <fstream>
 
+/**
+ * Represents a UPC.
+ */
 class UPC {
 public:
 	UPC()
@@ -13,6 +16,13 @@ public:
 	explicit UPC(unsigned long long number)
 		: _n(number) {}
 
+	explicit UPC(long number)
+		: _n(static_cast<unsigned long long>(number)) {}
+
+	/**
+	 * @param file Stream to read from
+	 * @return The UPC if input was valid, otherwise none
+	 */
 	static Option<UPC> read(std::istream& file) {
 		unsigned long long n = 0;
 		file >> n;

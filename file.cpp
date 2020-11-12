@@ -11,10 +11,12 @@ BST<UPC> buildTree(const std::string& filepath) {
 	// Skip first line
 	std::string s;
 	std::getline(file, s);
-	return readLines(file);
+	auto result = readLines(file);
+	result.rebalance();
+	return result;
 }
 
-BST<UPC> readLines(std::istream& file) {
+BST<UPC> readLines(std::istream& file) { // TODO return vector
 	BST<UPC> result;
 	size_t line = 1;
 	while (!file.eof()) {

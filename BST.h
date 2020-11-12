@@ -7,6 +7,11 @@
 #include <string>
 #include <vector>
 
+/**
+ * Binary search tree.
+ * @tparam K Key
+ * @tparam V Value
+ */
 template<class K, class V = std::string>
 class BST {
 private:
@@ -35,6 +40,9 @@ public:
 		this->operator=(other);
 	}
 
+	/**
+	 * Constructs tree with given entries.
+	 */
 	BST(std::initializer_list<std::tuple<K, V>> entries) : BST() {
 		for (const auto& entry : entries) {
 			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
@@ -42,6 +50,10 @@ public:
 		rebalance();
 	}
 
+	/**
+	 * Searches for value associated with given key.
+	 * @return The value if it exists, or none if it does not exist.
+	 */
 	Option<V> get(const K& key) const {
 		Node* parent = parentNode(_root.get(), key);
 		if (parent == nullptr) {
@@ -55,10 +67,16 @@ public:
 		return {};
 	}
 
+	/**
+	 * @return All entries in this tree.
+	 */
 	std::vector<std::tuple<K, V>> entries() const {
 		return nodeEntries(_root.get());
 	}
 
+	/**
+	 * Adds entry to tree.
+	 */
 	void insert(K key, V value) {
 		Node* parent = parentNode(_root.get(), key);
 		if (parent == nullptr) {
@@ -88,6 +106,9 @@ public:
 		}
 	}
 
+	/**
+	 * Rebalances this tree to minimize the height.
+	 */
 	void rebalance() {
 		if (_root == nullptr) {
 			return;
@@ -97,6 +118,9 @@ public:
 		this->_root = fromIterator(entries.begin(), entries.end() - 1);
 	}
 
+	/**
+	 * @return Max height of tree
+	 */
 	size_t height() const {
 		return _height(_root.get());
 	}
@@ -131,6 +155,9 @@ private:
 		return result;
 	}
 
+	/**
+	 * @return The node that is above the matching node
+	 */
 	static Node* parentNode(Node* root, const K& key) {
 		Node* curr = root;
 		Node* parent = nullptr;
@@ -155,6 +182,10 @@ private:
 		return std::max(_height(node->left.get()), _height(node->right.get())) + 1;
 	}
 
+	/**
+	 * Values pointed to by iterator must be in order.
+	 * @return Node with values copied from iterator
+	 */
 	template<class Iterator>
 	static std::unique_ptr<Node> fromIterator(Iterator begin, Iterator end) {
 		if (begin > end) {
