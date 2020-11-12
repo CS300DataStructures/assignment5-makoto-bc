@@ -39,6 +39,7 @@ public:
 		for (const auto& entry : entries) {
 			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
 		}
+		rebalance();
 	}
 
 	Option<V> get(const K& key) const {
@@ -54,8 +55,8 @@ public:
 		return {};
 	}
 
-	std::vector<std::tuple<K, V>> items() const {
-		return node_entries(_root.get());
+	std::vector<std::tuple<K, V>> entries() const {
+		return nodeEntries(_root.get());
 	}
 
 	void insert(K key, V value) {
@@ -77,26 +78,41 @@ public:
 		}
 	}
 
+	void rebalance() {
+		if (_root == nullptr) {
+			return;
+		}
+
+		auto entries = nodeEntries(_root.get());
+		this->_root = fromIterator(entries.begin(), entries.end() - 1);
+	}
+
+	size_t height() const {
+		return _height(_root.get());
+	}
+
 	bool operator==(const BST& rhs) const {
-		return items() == rhs.items();
+		return entries() == rhs.entries();
 	}
 
 	BST& operator=(const BST& other) {
-		for (const auto& entry : other.items()) {
+		_root = nullptr;
+		for (const auto& entry : other.entries()) {
 			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
 		}
+		rebalance();
 		return *this;
 	}
 
 private:
-	static std::vector<std::tuple<K, V>> node_entries(const Node* node) {
+	static std::vector<std::tuple<K, V>> nodeEntries(const Node* node) {
 		if (node == nullptr) {
 			return {};
 		}
 
-		auto result = node_entries(node->left.get());
+		auto result = nodeEntries(node->left.get());
 		result.push_back({node->key, node->value});
-		auto rightEntries = node_entries(node->right.get());
+		auto rightEntries = nodeEntries(node->right.get());
 		result.insert(
 			result.end(),
 			std::make_move_iterator(rightEntries.begin()),
@@ -119,6 +135,32 @@ private:
 			}
 		}
 		return parent;
+	}
+
+	static size_t _height(Node* node) {
+		if (node == nullptr) {
+			return 0;
+		}
+
+		return std::max(_height(node->left.get()), _height(node->right.get())) + 1;
+	}
+
+	template<class Iterator>
+	static std::unique_ptr<Node> fromIterator(Iterator begin, Iterator end) {
+		if (begin > end) {
+			return nullptr;
+		}
+
+		size_t mid = (end - begin) / 2;
+		auto left = fromIterator(begin, begin + mid - 1);
+		auto right = fromIterator(begin + mid + 1, end);
+
+		return std::make_unique<Node>(
+			std::move(left),
+			std::move(right),
+			std::get<0>(*(begin + mid)),
+			std::get<1>(*(begin + mid))
+		);
 	}
 
 	std::unique_ptr<Node> _root;

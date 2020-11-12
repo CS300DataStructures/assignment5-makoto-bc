@@ -3,7 +3,7 @@
 
 std::ostream& operator<<(std::ostream& os, const BST<int>& bst) {
 	os << "{";
-	auto items = bst.items();
+	auto items = bst.entries();
 	for (size_t i = 0; i < items.size(); ++i) {
 		os << "{" << std::get<0>(items[i]) << ", " << std::get<1>(items[i]) << "}";
 		if (i < items.size() - 1) {
@@ -46,7 +46,7 @@ TEST(BST, listConstructor) {
 	for (size_t i = 0; i < tests.size(); ++i) {
 		BST<int> result(tests[i].items);
 		std::vector<std::tuple<int, std::string>> expected(tests[i].items);
-		EXPECT_EQ(result.items(), expected) << i;
+		EXPECT_EQ(result.entries(), expected) << i;
 	}
 }
 
@@ -54,12 +54,18 @@ TEST(BST, copyConstructor) {
 	{
 		BST<int> tree;
 		auto copy = tree; // NOLINT(performance-unnecessary-copy-initialization)
-		ASSERT_EQ(copy, tree);
+		EXPECT_EQ(copy, tree);
 	}
 	{
 		BST<int> tree({{0, "a"}, {1, "b"}});
 		auto copy = tree; // NOLINT(performance-unnecessary-copy-initialization)
-		ASSERT_EQ(copy, tree);
+		EXPECT_EQ(copy, tree);
+	}
+	{
+		BST<int> tree({{0, "a"}, {1, "b"}});
+		BST<int> copy({{2, "c"}});
+		copy = tree; // NOLINT(performance-unnecessary-copy-initialization)
+		EXPECT_EQ(copy, tree);
 	}
 }
 
@@ -198,5 +204,32 @@ TEST(BST, insert) {
 	for (size_t i = 0; i < tests.size(); ++i) {
 		tests[i].tree.insert(tests[i].key, tests[i].value);
 		EXPECT_EQ(tests[i].tree, tests[i].expected) << i;
+	}
+}
+
+TEST(BST, rebalance) {
+	{
+		BST<int> tree;
+		EXPECT_EQ(tree.height(), 0);
+	}
+	{
+		BST<int> tree({{0, "a"}, {1, "b"}, {2, "c"}});
+		EXPECT_EQ(tree.height(), 2);
+	}
+	{
+		BST<int> tree({{2, "c"}, {1, "b"}, {0, "a"}});
+		EXPECT_EQ(tree.height(), 2);
+	}
+	{
+		BST<int> tree({
+			{0, "a"},
+			{1, "b"},
+			{2, "c"},
+			{10, ""},
+			{123, "q"},
+			{-20, "z"},
+			{-1, "ab"},
+		});
+		EXPECT_EQ(tree.height(), 3);
 	}
 }

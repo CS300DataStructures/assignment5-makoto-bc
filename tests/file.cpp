@@ -3,7 +3,7 @@
 
 std::ostream& operator<<(std::ostream& os, const BST<UPC>& bst) {
 	os << "{";
-	auto items = bst.items();
+	auto items = bst.entries();
 	for (size_t i = 0; i < items.size(); ++i) {
 		os << "{" << std::get<0>(items[i]) << ", " << std::get<1>(items[i]) << "}";
 		if (i < items.size() - 1) {
