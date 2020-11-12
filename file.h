@@ -12,14 +12,14 @@ BST<UPC> buildTree(const std::string& filepath);
 
 /**
  * @param file Database file
- * @return The database
+ * @return Entries in file
  */
-BST<UPC> readLines(std::istream& file);
+std::vector<std::tuple<UPC, std::string>> readLines(std::istream& file);
 
 /**
  * Reads a single record and adds it to tree.
  * @param line Database file
  */
-void readTree(std::istream& line, BST<UPC>& tree);
+std::tuple<UPC, std::string> readTree(std::istream& line);
 
 #endif //ASSIGNMENT_5__FILE_H_

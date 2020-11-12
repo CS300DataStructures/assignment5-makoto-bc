@@ -11,13 +11,11 @@ BST<UPC> buildTree(const std::string& filepath) {
 	// Skip first line
 	std::string s;
 	std::getline(file, s);
-	auto result = readLines(file);
-	result.rebalance();
-	return result;
+	return BST<UPC>(readLines(file));
 }
 
-BST<UPC> readLines(std::istream& file) { // TODO return vector
-	BST<UPC> result;
+std::vector<std::tuple<UPC, std::string>> readLines(std::istream& file) {
+	std::vector<std::tuple<UPC, std::string>> result;
 	size_t line = 1;
 	while (!file.eof()) {
 		file.peek();
@@ -26,7 +24,7 @@ BST<UPC> readLines(std::istream& file) { // TODO return vector
 		}
 
 		try {
-			readTree(file, result);
+			result.push_back(readTree(file));
 		} catch (const std::runtime_error& e) {
 			std::stringstream ss;
 			ss << "line " << line << ": " << e.what();
@@ -54,7 +52,7 @@ void skipCommas(std::istream& file) {
 	}
 }
 
-void readTree(std::istream& file, BST<UPC>& tree) {
+std::tuple<UPC, std::string> readTree(std::istream& file) {
 	skipCommas<2>(file);
 
 	auto upc = UPC::read(file);
@@ -66,5 +64,5 @@ void readTree(std::istream& file, BST<UPC>& tree) {
 
 	std::string name;
 	std::getline(file, name);
-	tree.insert(upc.value(), name);
+	return {upc.value(), std::move(name)};
 }

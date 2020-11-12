@@ -20,8 +20,8 @@ private:
 		Node(std::unique_ptr<Node> left, std::unique_ptr<Node> right, K key, V value)
 			: left(std::move(left))
 			, right(std::move(right))
-			, key(key)
-			, value(value) {}
+			, key(std::move(key))
+			, value(std::move(value)) {}
 
 		std::unique_ptr<Node> left;
 		std::unique_ptr<Node> right;
@@ -44,6 +44,16 @@ public:
 	 * Constructs tree with given entries.
 	 */
 	BST(std::initializer_list<std::tuple<K, V>> entries) : BST() {
+		for (const auto& entry : entries) {
+			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
+		}
+		rebalance();
+	}
+
+	/**
+	 * Constructs tree with given entries.
+	 */
+	explicit BST(std::vector<std::tuple<K, V>> entries) : BST() {
 		for (const auto& entry : entries) {
 			insert(std::move(std::get<0>(entry)), std::move(std::get<1>(entry)));
 		}
@@ -80,28 +90,38 @@ public:
 	void insert(K key, V value) {
 		Node* parent = parentNode(_root.get(), key);
 		if (parent == nullptr) {
-			_root = std::make_unique<Node>(nullptr, nullptr, key, std::move(value));
+			_root = std::make_unique<Node>(nullptr, nullptr, std::move(key), std::move(value));
 		} else if (key < parent->key) {
 			if (parent->left) {
 				parent->left = std::make_unique<Node>(
 					std::move(parent->left),
 					nullptr,
-					key,
+					std::move(key),
 					std::move(value)
 				);
 			} else {
-				parent->left = std::make_unique<Node>(nullptr, nullptr, key, std::move(value));
+				parent->left = std::make_unique<Node>(
+					nullptr,
+					nullptr,
+					std::move(key),
+					std::move(value)
+				);
 			}
 		} else {
 			if (parent->right) {
 				parent->right = std::make_unique<Node>(
 					nullptr,
 					std::move(parent->right),
-					key,
+					std::move(key),
 					std::move(value)
 				);
 			} else {
-				parent->right = std::make_unique<Node>(nullptr, nullptr, key, std::move(value));
+				parent->right = std::make_unique<Node>(
+					nullptr,
+					nullptr,
+					std::move(key),
+					std::move(value)
+				);
 			}
 		}
 	}
