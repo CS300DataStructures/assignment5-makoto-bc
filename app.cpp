@@ -1,12 +1,22 @@
 #include "file.h"
 #include <iostream>
+#include <chrono>
 
 void performSearchBST(const BST<UPC>& tree, const UPC& key) {
+	using std::chrono::high_resolution_clock;
+	using std::chrono::duration_cast;
+
+	auto start = high_resolution_clock::now();
 	Option<std::string> result = tree.get(key);
+	auto duration = high_resolution_clock::now() - start;
+
 	if (result.hasValue()) {
-		std::cout << result.value();
+		std::cout << result.value() << '\n';
+
+		auto nanos = static_cast<double>(duration_cast<std::chrono::nanoseconds>(duration).count());
+		std::cout << "Lookup time: " << nanos / 1000000.0 << " miliseconds" << std::endl;
 	} else {
-		std::cout << "Not found";
+		std::cout << "Not found" << std::endl;
 	}
 }
 
