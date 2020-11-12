@@ -20,10 +20,18 @@ int main() {
 	cout << "Please enter a UPC code(! to quit): ";
 	cin >> code;
 	while (code != "!") {
-        long entry = stol(code); //convert user inputted string to type long int
+		long entry = 0;
+		try {
+			entry = stol(code); //convert user inputted string to type long int
+		} catch (...) {
+			cout << "Please enter a UPC code(! to quit): ";
+			cin >> code;
+			continue;
+		}
+
 		UPC key(entry);
 		performSearchBST(tree, key);
-		
+
 		cout << "\nPlease enter a UPC code(! to quit): ";
 		cin >> code;
 	}
