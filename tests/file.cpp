@@ -17,8 +17,8 @@ std::ostream& operator<<(std::ostream& os, const BST<UPC>& bst) {
 TEST(file, buildTree) {
 	std::string path = __FILE__;
 	path = path.substr(0, path.find_last_of('/', path.find_last_of('/') - 1) + 1)
-		+ "Grocery_UPC_Database.csv";
-	ASSERT_EQ(buildTree(path).entries().size(), 110436);
+		+ "grocery_upc_database.csv";
+	ASSERT_EQ(buildTree(path).entries().size(), 110433);
 }
 
 TEST(file, readLines) {
@@ -45,22 +45,22 @@ TEST(file, readLines) {
 			{},
 		},
 		{ // 3
-			",,0,,a",
+			"0,a",
 			false,
 			{{UPC(0), "a"}},
 		},
 		{ // 4
-			",,0,,a\n",
+			"0,a\n",
 			false,
 			{{UPC(0), "a"}},
 		},
 		{ // 5
-			"1,00035200264013,035200264013,Riceland,Riceland American Jazmine Rice\n",
+			"035200264013,Riceland American Jazmine Rice\n",
 			false,
 			{{UPC(35200264013), "Riceland American Jazmine Rice"}},
 		},
 		{ // 6
-			"1,00035200264013,035200264013,Riceland,Riceland American Jazmine Rice\n2,00011111065925,011111065925,Caress,Caress Velvet Bliss Ultra Silkening Beauty Bar - 6 Ct",
+			"035200264013,Riceland American Jazmine Rice\n011111065925,Caress Velvet Bliss Ultra Silkening Beauty Bar - 6 Ct",
 			false,
 			{
 				{UPC(35200264013), "Riceland American Jazmine Rice"},
@@ -81,7 +81,7 @@ TEST(file, readLines) {
 	}
 }
 
-TEST(file, readTree) {
+TEST(file, readEntry) {
 	struct Test {
 		std::string text;
 		bool expectThrow;
@@ -95,42 +95,42 @@ TEST(file, readTree) {
 			{},
 		},
 		{ // 1
-			",,",
+			",",
 			true,
 			{},
 		},
 		{ // 2
-			",,a",
+			",a",
 			true,
 			{},
 		},
 		{ // 3
-			",,0",
+			"0",
 			true,
 			{},
 		},
 		{ // 4
-			",,0,,",
+			"0,",
 			false,
 			{UPC(0), ""},
 		},
 		{ // 5
-			",,0,,a",
+			"0,a",
 			false,
 			{UPC(0), "a"},
 		},
 		{ // 6
-			",,0,,a\nb",
-			false,
-			{UPC(0), "a"},
-		},
-		{ // 7
-			",,0,\n",
+			"0 a",
 			true,
 			{},
 		},
+		{ // 7
+			"0,a\nb",
+			false,
+			{UPC(0), "a"},
+		},
 		{ // 8
-			"1,00035200264013,035200264013,Riceland,Riceland American Jazmine Rice\n",
+			"035200264013,Riceland American Jazmine Rice\n",
 			false,
 			{UPC(35200264013), "Riceland American Jazmine Rice"},
 		},
@@ -139,10 +139,10 @@ TEST(file, readTree) {
 	for (size_t i = 0; i < tests.size(); ++i) {
 		std::istringstream ss(tests[i].text);
 		if (tests[i].expectThrow) {
-			EXPECT_THROW(readTree(ss), std::runtime_error) << i;
+			EXPECT_THROW(readEntry(ss), std::runtime_error) << i;
 		} else {
 			std::tuple<UPC, std::string> result;
-			EXPECT_NO_THROW(result = readTree(ss)) << i;
+			EXPECT_NO_THROW(result = readEntry(ss)) << i;
 			EXPECT_EQ(result, tests[i].expected) << i;
 		}
 	}

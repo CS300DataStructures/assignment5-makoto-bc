@@ -18,8 +18,8 @@ std::vector<std::tuple<UPC, std::string>> readLines(std::istream& file);
 
 /**
  * Reads a single record and adds it to tree.
- * @param line Database file
+ * @param file Database file
  */
-std::tuple<UPC, std::string> readTree(std::istream& line);
+std::tuple<UPC, std::string> readEntry(std::istream& file);
 
 #endif //ASSIGNMENT_5__FILE_H_

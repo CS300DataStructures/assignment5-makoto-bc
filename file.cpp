@@ -24,7 +24,7 @@ std::vector<std::tuple<UPC, std::string>> readLines(std::istream& file) {
 		}
 
 		try {
-			result.push_back(readTree(file));
+			result.push_back(readEntry(file));
 		} catch (const std::runtime_error& e) {
 			std::stringstream ss;
 			ss << "line " << line << ": " << e.what();
@@ -34,32 +34,17 @@ std::vector<std::tuple<UPC, std::string>> readLines(std::istream& file) {
 	}
 }
 
-template<size_t count>
-void skipCommas(std::istream& file) {
-	size_t commaCount = 0;
-	while (true) {
-		char c = '\0';
-		file >> c;
-		if (c == ',') {
-			++commaCount;
-			if (commaCount == count) {
-				return;
-			}
-		} else if (!file.good()) {
-			throw std::runtime_error("invalid file");
-		}
-	}
-}
-
-std::tuple<UPC, std::string> readTree(std::istream& file) {
-	skipCommas<2>(file);
-
+std::tuple<UPC, std::string> readEntry(std::istream& file) {
 	auto upc = UPC::read(file);
 	if (!upc.hasValue()) {
 		throw std::runtime_error("invalid file");
 	}
 
-	skipCommas<2>(file);
+	char c = '\0';
+	file >> c;
+	if (c != ',') {
+		throw std::runtime_error("invalid file");
+	}
 
 	std::string name;
 	std::getline(file, name);

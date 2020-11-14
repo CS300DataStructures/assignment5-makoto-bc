@@ -33,7 +33,7 @@ void performSearchBST(const BST<UPC>& tree, const UPC& key) {
 int main() {
     using namespace std;
 
-    string filename = "Grocery_UPC_Database.csv";
+    string filename = "grocery_upc_database.csv";
 	BST<UPC> tree = buildTree(filename);  //build binary search tree of UPC objects
 
 	string code;
