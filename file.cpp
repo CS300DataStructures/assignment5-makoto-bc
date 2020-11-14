@@ -1,5 +1,4 @@
 #include "file.h"
-#include <sstream>
 #include <iostream>
 
 BST<UPC> buildTree(const std::string& filepath) {
@@ -16,7 +15,6 @@ BST<UPC> buildTree(const std::string& filepath) {
 
 std::vector<std::tuple<UPC, std::string>> readLines(std::istream& file) {
 	std::vector<std::tuple<UPC, std::string>> result;
-	size_t line = 1;
 	while (true) {
 		file.peek();
 		if (file.eof()) {
@@ -26,24 +24,21 @@ std::vector<std::tuple<UPC, std::string>> readLines(std::istream& file) {
 		try {
 			result.push_back(readEntry(file));
 		} catch (const std::runtime_error& e) {
-			std::stringstream ss;
-			ss << "line " << line << ": " << e.what();
-			throw std::runtime_error(ss.str());
+			throw InvalidFile();
 		}
-		++line;
 	}
 }
 
 std::tuple<UPC, std::string> readEntry(std::istream& file) {
 	auto upc = UPC::read(file);
 	if (!upc.hasValue()) {
-		throw std::runtime_error("invalid file");
+		throw InvalidFile();
 	}
 
 	char c = '\0';
 	file >> c;
 	if (c != ',') {
-		throw std::runtime_error("invalid file");
+		throw InvalidFile();
 	}
 
 	std::string name;

@@ -42,7 +42,11 @@ int main() {
 	while (code != "!") {
 		unsigned long long entry = 0;
 		try {
-			entry = stoull(code);
+#define long
+#define stol stoull
+			long entry = stol(code); //convert user inputted string to type long int
+#undef long
+#undef stol
 		} catch (...) {
 			cout << "Please enter a UPC code(! to quit): ";
 			cin >> code;

@@ -72,7 +72,7 @@ TEST(file, readLines) {
 	for (size_t i = 0; i < tests.size(); ++i) {
 		std::istringstream ss(tests[i].text);
 		if (tests[i].expectThrow) {
-			EXPECT_THROW(readLines(ss), std::runtime_error) << i;
+			EXPECT_THROW(readLines(ss), InvalidFile) << i;
 		} else {
 			std::vector<std::tuple<UPC, std::string>> result;
 			EXPECT_NO_THROW(result = readLines(ss)) << i;
@@ -139,7 +139,7 @@ TEST(file, readEntry) {
 	for (size_t i = 0; i < tests.size(); ++i) {
 		std::istringstream ss(tests[i].text);
 		if (tests[i].expectThrow) {
-			EXPECT_THROW(readEntry(ss), std::runtime_error) << i;
+			EXPECT_THROW(readEntry(ss), InvalidFile) << i;
 		} else {
 			std::tuple<UPC, std::string> result;
 			EXPECT_NO_THROW(result = readEntry(ss)) << i;
