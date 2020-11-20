@@ -5,7 +5,7 @@
 
 #include "file.h"
 #include <iostream>
-#include <chrono>
+#include <profileapi.h>
 
 /**
  * Searches tree and outputs description of item and search duration.
@@ -13,18 +13,21 @@
  * @param key Key to search for
  */
 void performSearchBST(const BST<UPC>& tree, const UPC& key) {
-	using std::chrono::high_resolution_clock;
-	using std::chrono::duration_cast;
-
-	auto start = high_resolution_clock::now();
+	LARGE_INTEGER start;
+	QueryPerformanceCounter(&start);
 	Option<std::string> result = tree.get(key);
-	auto duration = high_resolution_clock::now() - start;
+
+	LARGE_INTEGER end;
+	QueryPerformanceCounter(&end);
+
+	LARGE_INTEGER frequency;
+	QueryPerformanceFrequency(&frequency);
+
+	double milliseconds = static_cast<double>(end.QuadPart - start.QuadPart) / frequency.QuadPart * 1000;
 
 	if (result.hasValue()) {
 		std::cout << result.value() << '\n';
-
-		auto nanos = static_cast<double>(duration_cast<std::chrono::nanoseconds>(duration).count());
-		std::cout << "Lookup time: " << nanos / 1000000.0 << " miliseconds" << std::endl;
+		std::cout << "Lookup time: " << std::fixed << milliseconds << " miliseconds" << std::endl;
 	} else {
 		std::cout << "Not found" << std::endl;
 	}
